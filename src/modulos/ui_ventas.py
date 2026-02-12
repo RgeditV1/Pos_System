@@ -10,3 +10,9 @@ class UIVentas(UIdraw):
 
     def header(self):
         super().header()
+
+    def center(self):
+        super().center()
+    
+    def footer(self):
+        super().footer()
