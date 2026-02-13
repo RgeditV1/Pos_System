@@ -1,16 +1,14 @@
-from modulos.ui_ventas import UIVentas
+from ui_draw import UIdraw
 import customtkinter as ctk
 
 class Manager(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("900x600")
+        self.geometry("1200x720")
         self.resizable(False,False)
         self.title("Punto De Venta A&L")
 
-        self.ventas = UIVentas(self)
-        self.ventas.draw()
-
+        UIdraw(self)
 
 if __name__ == "__main__":
     app = Manager()

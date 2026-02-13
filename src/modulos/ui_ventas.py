@@ -1,18 +1,13 @@
 import customtkinter as ctk
-from ui_draw import UIdraw
 
-class UIVentas(UIdraw):
-    def __init__(self, padre):
-        super().__init__(padre)
+class UIVentas:
+    def __init__(self, frame):
+        self.root = frame
+        self.draw()
 
     def draw(self):
-        super().draw()
+        self.header()
 
     def header(self):
-        super().header()
-
-    def center(self):
-        super().center()
-    
-    def footer(self):
-        super().footer()
+        self.header_frame = ctk.CTkFrame(self.root, width=1000, height=200, corner_radius=1, border_width=1)
+        self.header_frame.pack(padx=(5,5), pady=(5,5))

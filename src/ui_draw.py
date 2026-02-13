@@ -1,35 +1,47 @@
 import customtkinter as ctk
-#Aqui definimos la estructura de los widgets
+from modulos.ui_ventas import UIVentas
 class UIdraw:
     def __init__(self, padre):
         self.padre = padre
-        self.root = ctk.CTkFrame(self.padre, fg_color="black")
-        self.root.pack(fill="both", expand=True, pady=(1,1), padx=(1,1))
-        self.root.pack_propagate(False)
+        self.root = ctk.CTkFrame(self.padre)
+        self.root.pack(fill="both", expand=True, pady=(0,0))
+        self.pestaña = {}
+        self.pestañas = ['Ventas', 'Inventario', 'Clientes', 'Proveedor', 'Pedidos', 'Informacion']
+        self.draw()
+
+
     def draw(self):
-        self.header()
-        self.center()
+        self.contenido()
         self.footer()
 
-    def header(self):
-        self.main_frame = ctk.CTkFrame(self.root, height=65)
-        self.main_frame.pack(fill="x")
+    @staticmethod #si no lo tuviera, tendria que ponerle self y seria un quilombo
+    def tab_conf(func): #Configuramos las tabs, una fucion solo para esto
+        def wrapper(self):
+            func(self)
+            fuente = ctk.CTkFont(family='Roboto',size=25, weight="bold")
+            # Cambiar tamaño y fuente de los botones de pestañas
+            for btn in self.frame_tab._segmented_button._buttons_dict.values():
+                btn.configure(width=25, height=25, font=fuente)
+        return wrapper
 
-        #Botones
-
-        self.pestañas = ['Ventas', 'Inventario', 'Clientes', 'Proveedor', 'Pedidos', 'Informacion']
-        for nombre in self.pestañas:
-            text = nombre
-            btn = ctk.CTkButton(self.main_frame, text=text, font=('Roboto',25),
-                                        height=25, corner_radius=1,
-                                        border_width=1, fg_color='#1976D2', bg_color='black')
-            btn.pack(side='left', padx=(1,1), pady=(2,2), fill='x', expand=True)
+    @tab_conf
+    def tabs(self):
+        for tab in self.pestañas:
+            self.pestaña[tab] = self.frame_tab.add(tab)
+        self.frame_tab.set('Ventas') #Tab por defecto
 
 
-    def center(self):
-        self.main_frame = ctk.CTkFrame(self.root, corner_radius=0)
-        self.main_frame.pack(fill="both", expand=True)
+    def contenido(self):
+        self.frame_tab = ctk.CTkTabview(self.root, corner_radius=5)
+        self.frame_tab.pack(fill='both', expand=True,pady=(0,0))
+        self.frame_tab.pack_propagate(False)
+        self.tabs()
+
+        UIVentas(self.pestaña['Ventas'])
+        
+
+
 
     def footer(self):
-        self.main_frame = ctk.CTkFrame(self.root, height=65, border_width=1, border_color='gray', corner_radius=0)
-        self.main_frame.pack(fill="x")
+        self.footer_frame = ctk.CTkFrame(self.root, height=65, border_width=1, border_color='gray', corner_radius=0)
+        self.footer_frame.pack(fill="x")
