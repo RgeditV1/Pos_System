@@ -21,7 +21,7 @@ class UIdraw:
             fuente = ctk.CTkFont(family='Roboto',size=25, weight="bold")
             # Cambiar tamaño y fuente de los botones de pestañas
             for btn in self.frame_tab._segmented_button._buttons_dict.values():
-                btn.configure(width=25, height=25, font=fuente)
+                btn.configure(height=25, font=fuente)
         return wrapper
 
     @tab_conf
@@ -43,5 +43,6 @@ class UIdraw:
 
 
     def footer(self):
-        self.footer_frame = ctk.CTkFrame(self.root, height=65, border_width=1, border_color='gray', corner_radius=0)
+        self.footer_frame = ctk.CTkFrame(self.root, height=65, border_width=1,
+                                         border_color='gray', corner_radius=0)
         self.footer_frame.pack(fill="x")
