@@ -1,2 +1,8 @@
 #Las cache que genera python
 __pycache__
+
+#un archivo de prueba que tengo por ahi
+run.py
+
+#todas las db
+*.db

@@ -1,4 +1,4 @@
-from ui_draw import UIdraw
+from modulos.ui_draw import UIdraw
 import customtkinter as ctk
 
 class Manager(ctk.CTk):
