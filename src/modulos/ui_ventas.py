@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 from CTkTreeview import CTkTreeview
 from core.inventario import Inventario
 
@@ -11,9 +12,26 @@ class UIVentas:
         self.cabecera()
         self.contenido()
 
+    def cabecera(self):
+        self.header_frame = ctk.CTkFrame(self.root, corner_radius=1, border_width=1)
+        self.header_frame.pack(padx=(5,5), pady=(5,5))
+        self.form()
+
+    def contenido(self):
+        self.contenido_frame = ctk.CTkFrame(self.root, fg_color='transparent')
+        self.contenido_frame.pack()
+        self.tabla()
+
+#Inicio de la definicion de notificaciones---------------------------
+    def mostrar_info(self, text:str, icon:str ,title="info"):
+        CTkMessagebox(title=title, message=text, icon=icon)
+
+#Fin de la definicion de notificaciones------------------------------
     def accion_btn(self, btn: dict):
         btn['Agregar Articulos'].configure(command=lambda:self.agregar_producto())
-
+        btn['Eliminar Articulo'].configure(command=lambda:self.eliminar_producto())
+    
+    @staticmethod
     def botones_debajo(form):
         '''
             Esto es solo para no alargar la funcion de form, pero si hay una forma mejor implementa, estoy
@@ -78,6 +96,7 @@ class UIVentas:
             
             elif texto == "Producto:":
                 widget = ctk.CTkEntry(self.formulario, placeholder_text='Buscar ID', width=300)
+                widget.bind('<Return>', self.agregar_producto)
             
             elif texto == "Cantidad:":
                 widget = ctk.CTkEntry(self.formulario)
@@ -91,12 +110,6 @@ class UIVentas:
             widget.grid(row=fila, column=columna_widget, padx=10, pady=10, sticky="w")
 
             self.widgets[texto] = widget  # guardamos referencia
-
-
-    def cabecera(self):
-        self.header_frame = ctk.CTkFrame(self.root, corner_radius=1, border_width=1)
-        self.header_frame.pack(padx=(5,5), pady=(5,5))
-        self.form()
 
     @staticmethod
     def mod_tabla(tabla):
@@ -122,27 +135,32 @@ class UIVentas:
         '''
         Aqui se define como sera la tabla donde se insertaran los datos de factura
         '''
-        #Nota: e.g self.tabla.insert('', 'end', value=('123h2','jose','mainboard','40.00',2,80.00))
         self.cabeceras = ['id', 'descripcion', 'precio', 'cantidad', 'total']
         self.tabla = CTkTreeview(self.contenido_frame, width=10, height=15,
                                  columns=self.cabeceras, show='headings')
         self.tabla.pack(pady=(3,5))
-        
-
-    def contenido(self):
-        self.contenido_frame = ctk.CTkFrame(self.root, fg_color='transparent')
-        self.contenido_frame.pack()
-        self.tabla()
-
+        self.tabla.bind('<Delete>', self.eliminar_producto)
     
-    def agregar_producto(self): #añade productos a la tabla
-        self.consulta= Inventario()
-        resultado = self.consulta.buscar_producto(id_producto=self.widgets['Producto:'].get())
-        filtro = list(resultado)
-        del filtro[4:5] # para que no apareza el costo y mayoreo
+    #pasales None a los events para que sea opcional usar el teclado, si no te tira error jaja
+    def agregar_producto(self, event=None): #añade productos a la tabla
+        try:
+            self.consulta= Inventario()
+            resultado = self.consulta.buscar_producto(id_producto=self.widgets['Producto:'].get())
+            filtro = list(resultado)
+            del filtro[3:5] # para que no apareza el costo y mayoreo
+            
 
-         # para evaluar cada vez que se añada un item nuevo
-        for item in self.tabla.get_children():
-            if self.tabla.item(item, 'values')[0] == filtro[0]:
-                return  
-        self.tabla.insert("", 'end', values=filtro)
+            # para evaluar cada vez que se añada un item nuevo
+            for item in self.tabla.get_children():
+                if self.tabla.item(item, 'values')[0] == filtro[0]: #e.g item en tabla == item por agregar
+                    return  
+            self.tabla.insert("", 'end', values=filtro)
+        except:
+            self.mostrar_info(text='Producto no encontrado, Inserte un id valido', icon="warning")
+
+    def eliminar_producto(self, event=None): # solo elimina el item de la tabla, no del inventario XD
+        try:
+            seleccion = self.tabla.selection()
+            self.tabla.delete(seleccion)
+        except:
+            print('Seleccione un item')

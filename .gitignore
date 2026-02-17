@@ -3,6 +3,11 @@ __pycache__
 
 #un archivo de prueba que tengo por ahi
 run.py
+pruebas.py
+prueba.py
 
 #todas las db
 *.db
+
+#carpeta de vscode
+.vscode
