@@ -81,7 +81,7 @@ class Inventario:
             return self.consulta.fetchall()
         except sqlite3.Error as err:
             print("Error mostrando productos:", err)
-            return []
+            return ()
 
     # -------------------------
     # VALIDACIÓN

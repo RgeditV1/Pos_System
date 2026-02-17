@@ -12,7 +12,6 @@ class UIdraw:
 
     def draw(self):
         self.contenido()
-        self.footer()
 
     @staticmethod #si no lo tuviera, tendria que ponerle self y seria un quilombo
     def tab_conf(func): #Configuramos las tabs, una fucion solo para esto
@@ -38,11 +37,3 @@ class UIdraw:
         self.tabs()
 
         UIVentas(self.pestaña['Ventas'])
-        
-
-
-
-    def footer(self):
-        self.footer_frame = ctk.CTkFrame(self.root, height=65, border_width=1,
-                                         border_color='gray', corner_radius=0)
-        self.footer_frame.pack(fill="x")

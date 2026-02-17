@@ -8,6 +8,7 @@ class Manager(ctk.CTk):
         self.resizable(False,False)
         self.title("Punto De Venta A&L")
         ctk.set_default_color_theme('green')
+        ctk.set_appearance_mode('light')
 
         UIdraw(self)
 
