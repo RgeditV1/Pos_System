@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from CTkMessagebox import CTkMessagebox
-from CTkTreeview import CTkTreeview
+from CTkTreeview import CTkTreeview # pyright: ignore[reportPrivateImportUsage]
 from core.inventario import Inventario
+import modulos.sub_ventanas.mini_inventario as mini_inventario
 
 class UIVentas:
     def __init__(self, frame):
@@ -23,13 +23,23 @@ class UIVentas:
         self.tabla()
 
 #Inicio de la definicion de notificaciones---------------------------
-    def mostrar_info(self, text:str, icon:str ,title="info"):
-        CTkMessagebox(title=title, message=text, icon=icon)
+    def mostrar_info(self, text:str):
+        noti = ctk.CTkToplevel()
+        noti.overrideredirect(True)  # Quita bordes y barra de título
+        #noti.geometry("250x80")
+        noti.attributes("-topmost", True)  # Siempre encima
+
+        label = ctk.CTkLabel(noti, text=text, fg_color="orange", bg_color="#2b2b2b")
+        label.pack(expand=True, fill='both')
+
+        # Cerrar automáticamente después de 3 segundos
+        noti.after(3000, noti.destroy)
 
 #Fin de la definicion de notificaciones------------------------------
     def accion_btn(self, btn: dict):
         btn['Agregar Articulos'].configure(command=lambda:self.agregar_producto())
         btn['Eliminar Articulo'].configure(command=lambda:self.eliminar_producto())
+        btn['Buscar Inventario'].configure(command=lambda:self.buscar_inventario())
     
     @staticmethod
     def botones_debajo(form):
@@ -137,30 +147,44 @@ class UIVentas:
         '''
         self.cabeceras = ['id', 'descripcion', 'precio', 'cantidad', 'total']
         self.tabla = CTkTreeview(self.contenido_frame, width=10, height=15,
-                                 columns=self.cabeceras, show='headings')
-        self.tabla.pack(pady=(3,5))
-        self.tabla.bind('<Delete>', self.eliminar_producto)
+                                 columns=self.cabeceras, show='headings') # type: ignore
+        self.tabla.pack(pady=(3,5)) # type: ignore
+        self.tabla.bind('<Delete>', self.eliminar_producto) # pyright: ignore[reportAttributeAccessIssue]
     
     #pasales None a los events para que sea opcional usar el teclado, si no te tira error jaja
     def agregar_producto(self, event=None): #añade productos a la tabla
         try:
             self.consulta= Inventario()
-            resultado = self.consulta.buscar_producto(id_producto=self.widgets['Producto:'].get())
-            filtro = list(resultado)
-            del filtro[3:5] # para que no apareza el costo y mayoreo
-            
+            self.resultado = self.consulta.buscar_producto(id_producto=self.widgets['Producto:'].get())
+            filtro = list(self.resultado[:3]) # type: ignore
+
+            cantidad= self.widgets['Cantidad:'].get()
+            ag_cantidad = int
+            if cantidad == "" and cantidad.isdigit() == False:
+                ag_cantidad = 1 
+            else:
+                ag_cantidad = int(cantidad)
+
+            sum_total = int(ag_cantidad + self.resultado[2]) # type: ignore
+            filtro.insert(3,ag_cantidad)
+            filtro.append(sum_total)
 
             # para evaluar cada vez que se añada un item nuevo
-            for item in self.tabla.get_children():
-                if self.tabla.item(item, 'values')[0] == filtro[0]: #e.g item en tabla == item por agregar
+            for item in self.tabla.get_children(): # type: ignore
+                #e.g item id en tabla == item id por agregar = no agregar item nuevo
+                if self.tabla.item(item, 'values')[0] == filtro[0]:#type: ignore 
                     return  
-            self.tabla.insert("", 'end', values=filtro)
+            self.tabla.insert("", 'end', values=filtro) # type: ignore
         except:
-            self.mostrar_info(text='Producto no encontrado, Inserte un id valido', icon="warning")
+            self.mostrar_info(text='Producto no encontrado.\nInserte un id y una cantidad valida')
 
     def eliminar_producto(self, event=None): # solo elimina el item de la tabla, no del inventario XD
         try:
-            seleccion = self.tabla.selection()
-            self.tabla.delete(seleccion)
+            seleccion = self.tabla.selection() # type: ignore
+            self.tabla.delete(seleccion) # type: ignore
+            del self.resultado
         except:
             print('Seleccione un item')
+
+    def buscar_inventario(self):
+        mini_inventario.abrir_busqueda(self.root)
