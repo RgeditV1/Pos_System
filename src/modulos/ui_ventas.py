@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from CTkTreeview import CTkTreeview # pyright: ignore[reportPrivateImportUsage]
-from core.inventario import Inventario
 import modulos.sub_ventanas.mini_inventario as mini_inventario
+from CTkTreeview import CTkTreeview # pyright: ignore[reportPrivateImportUsage]
+from core.productos import Producto
 
 class UIVentas:
     def __init__(self, frame):
@@ -154,35 +154,23 @@ class UIVentas:
     #pasales None a los events para que sea opcional usar el teclado, si no te tira error jaja
     def agregar_producto(self, event=None): #añade productos a la tabla
         try:
-            self.consulta= Inventario()
-            self.resultado = self.consulta.buscar_producto(id_producto=self.widgets['Producto:'].get())
-            filtro = list(self.resultado[:3]) # type: ignore
-
-            cantidad= self.widgets['Cantidad:'].get()
-            ag_cantidad = int
-            if cantidad == "" and cantidad.isdigit() == False:
-                ag_cantidad = 1 
-            else:
-                ag_cantidad = int(cantidad)
-
-            sum_total = int(ag_cantidad + self.resultado[2]) # type: ignore
-            filtro.insert(3,ag_cantidad)
-            filtro.append(sum_total)
-
+            cantidad = self.widgets['Cantidad:'].get()
+            id = self.widgets['Producto:'].get()
+            producto = Producto().buscar_producto(id_producto=id, cantidad=cantidad)
             # para evaluar cada vez que se añada un item nuevo
             for item in self.tabla.get_children(): # type: ignore
                 #e.g item id en tabla == item id por agregar = no agregar item nuevo
-                if self.tabla.item(item, 'values')[0] == filtro[0]:#type: ignore 
+                if self.tabla.item(item, 'values')[0] == producto[0]:#type: ignore 
                     return  
-            self.tabla.insert("", 'end', values=filtro) # type: ignore
-        except:
+            self.tabla.insert("", 'end', values=producto) # type: ignore
+        except Exception as err:
+            print(f"error: {err}")
             self.mostrar_info(text='Producto no encontrado.\nInserte un id y una cantidad valida')
 
     def eliminar_producto(self, event=None): # solo elimina el item de la tabla, no del inventario XD
         try:
             seleccion = self.tabla.selection() # type: ignore
             self.tabla.delete(seleccion) # type: ignore
-            del self.resultado
         except:
             print('Seleccione un item')
 

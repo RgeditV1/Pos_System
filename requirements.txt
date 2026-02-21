@@ -1,1 +1,3 @@
-customtkinter==5.2.2
+customtkinter
+git+https://github.com/JohnDevlopment/CTkTreeview.git #ctkTreeview
+icecream #denpendencia para ctktreeview

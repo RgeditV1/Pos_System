@@ -1,7 +1,8 @@
 import sqlite3
-
+from pathlib import Path
+path = Path.cwd().joinpath('db','data.db')
 class ConexionDB:
-    def __init__(self, ruta_db="src/db/data.db"):
+    def __init__(self, ruta_db=path):
         self.nombre_db = ruta_db
         self.conn = None
         self.cursor = None
