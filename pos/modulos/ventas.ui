@@ -29,7 +29,7 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::Box</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Shadow::Raised</enum>
@@ -345,7 +345,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="tabla">
+    <widget class="QFrame" name="bottom">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -356,13 +356,13 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::Box</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::Shadow::Sunken</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
        <widget class="QTableWidget" name="tabla_widget">
         <property name="acceptDrops">
          <bool>true</bool>
@@ -414,19 +414,32 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0">
        <widget class="QFrame" name="pago_frame">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
+         <enum>QFrame::Shape::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Shadow::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
+         <item row="1" column="0">
+          <widget class="QPushButton" name="pushButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Ventas Realizadas</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QPushButton" name="pagar_boton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -439,23 +452,10 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" rowspan="2">
-          <widget class="QPushButton" name="pushButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Ventas Realizadas</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
+         <item row="0" column="1" rowspan="2">
           <widget class="QFrame" name="totales">
            <property name="frameShape">
-            <enum>QFrame::Shape::Box</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Shadow::Raised</enum>

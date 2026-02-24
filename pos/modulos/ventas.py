@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplication, QComboBox,
     QFrame, QGridLayout, QHBoxLayout, QHeaderView,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_main(object):
     def setupUi(self, main):
@@ -39,7 +39,7 @@ class Ui_main(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.form.sizePolicy().hasHeightForWidth())
         self.form.setSizePolicy(sizePolicy1)
-        self.form.setFrameShape(QFrame.Shape.Box)
+        self.form.setFrameShape(QFrame.Shape.NoFrame)
         self.form.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_2 = QGridLayout(self.form)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
@@ -195,16 +195,16 @@ class Ui_main(object):
 
         self.gridLayout.addWidget(self.form, 0, 0, 1, 1)
 
-        self.tabla = QFrame(main)
-        self.tabla.setObjectName(u"tabla")
-        self.tabla.setEnabled(True)
-        sizePolicy1.setHeightForWidth(self.tabla.sizePolicy().hasHeightForWidth())
-        self.tabla.setSizePolicy(sizePolicy1)
-        self.tabla.setFrameShape(QFrame.Shape.Box)
-        self.tabla.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout = QVBoxLayout(self.tabla)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.tabla_widget = QTableWidget(self.tabla)
+        self.bottom = QFrame(main)
+        self.bottom.setObjectName(u"bottom")
+        self.bottom.setEnabled(True)
+        sizePolicy1.setHeightForWidth(self.bottom.sizePolicy().hasHeightForWidth())
+        self.bottom.setSizePolicy(sizePolicy1)
+        self.bottom.setFrameShape(QFrame.Shape.NoFrame)
+        self.bottom.setFrameShadow(QFrame.Shadow.Sunken)
+        self.gridLayout_5 = QGridLayout(self.bottom)
+        self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.tabla_widget = QTableWidget(self.bottom)
         self.tabla_widget.setObjectName(u"tabla_widget")
         self.tabla_widget.setAcceptDrops(True)
         self.tabla_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
@@ -223,56 +223,50 @@ class Ui_main(object):
         self.tabla_widget.setSortingEnabled(True)
         self.tabla_widget.setSupportedDragActions(Qt.DropAction.MoveAction)
 
-        self.verticalLayout.addWidget(self.tabla_widget)
+        self.gridLayout_5.addWidget(self.tabla_widget, 0, 0, 1, 1)
 
-        self.pago_frame = QFrame(self.tabla)
+        self.pago_frame = QFrame(self.bottom)
         self.pago_frame.setObjectName(u"pago_frame")
-        self.pago_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.pago_frame.setFrameShape(QFrame.Shape.NoFrame)
         self.pago_frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_3 = QGridLayout(self.pago_frame)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.pushButton = QPushButton(self.pago_frame)
+        self.pushButton.setObjectName(u"pushButton")
+        sizePolicy2.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy2)
+
+        self.gridLayout_3.addWidget(self.pushButton, 1, 0, 1, 1)
+
         self.pagar_boton = QPushButton(self.pago_frame)
         self.pagar_boton.setObjectName(u"pagar_boton")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.pagar_boton.sizePolicy().hasHeightForWidth())
-        self.pagar_boton.setSizePolicy(sizePolicy4)
+        sizePolicy2.setHeightForWidth(self.pagar_boton.sizePolicy().hasHeightForWidth())
+        self.pagar_boton.setSizePolicy(sizePolicy2)
         self.pagar_boton.setStyleSheet(u"font: 20pt \"Sans Serif\";")
 
         self.gridLayout_3.addWidget(self.pagar_boton, 0, 0, 1, 1)
 
-        self.pushButton = QPushButton(self.pago_frame)
-        self.pushButton.setObjectName(u"pushButton")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy5)
-
-        self.gridLayout_3.addWidget(self.pushButton, 1, 0, 2, 1)
-
         self.totales = QFrame(self.pago_frame)
         self.totales.setObjectName(u"totales")
-        self.totales.setFrameShape(QFrame.Shape.Box)
+        self.totales.setFrameShape(QFrame.Shape.NoFrame)
         self.totales.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_4 = QGridLayout(self.totales)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.sub_total_label = QLabel(self.totales)
         self.sub_total_label.setObjectName(u"sub_total_label")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.sub_total_label.sizePolicy().hasHeightForWidth())
-        self.sub_total_label.setSizePolicy(sizePolicy6)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.sub_total_label.sizePolicy().hasHeightForWidth())
+        self.sub_total_label.setSizePolicy(sizePolicy4)
         self.sub_total_label.setStyleSheet(u"font: 16pt \"Sans Serif\";")
 
         self.gridLayout_4.addWidget(self.sub_total_label, 2, 0, 1, 2)
 
         self.total_nro = QLabel(self.totales)
         self.total_nro.setObjectName(u"total_nro")
-        sizePolicy6.setHeightForWidth(self.total_nro.sizePolicy().hasHeightForWidth())
-        self.total_nro.setSizePolicy(sizePolicy6)
+        sizePolicy4.setHeightForWidth(self.total_nro.sizePolicy().hasHeightForWidth())
+        self.total_nro.setSizePolicy(sizePolicy4)
         font = QFont()
         font.setFamilies([u"Sans Serif"])
         font.setPointSize(16)
@@ -286,8 +280,8 @@ class Ui_main(object):
 
         self.itebis_nro = QLabel(self.totales)
         self.itebis_nro.setObjectName(u"itebis_nro")
-        sizePolicy6.setHeightForWidth(self.itebis_nro.sizePolicy().hasHeightForWidth())
-        self.itebis_nro.setSizePolicy(sizePolicy6)
+        sizePolicy4.setHeightForWidth(self.itebis_nro.sizePolicy().hasHeightForWidth())
+        self.itebis_nro.setSizePolicy(sizePolicy4)
         self.itebis_nro.setStyleSheet(u"font: 16pt \"Sans Serif\";")
         self.itebis_nro.setWordWrap(True)
 
@@ -301,8 +295,8 @@ class Ui_main(object):
 
         self.total_label = QLabel(self.totales)
         self.total_label.setObjectName(u"total_label")
-        sizePolicy6.setHeightForWidth(self.total_label.sizePolicy().hasHeightForWidth())
-        self.total_label.setSizePolicy(sizePolicy6)
+        sizePolicy4.setHeightForWidth(self.total_label.sizePolicy().hasHeightForWidth())
+        self.total_label.setSizePolicy(sizePolicy4)
         self.total_label.setFont(font)
         self.total_label.setStyleSheet(u"font: 16pt \"Sans Serif\";")
 
@@ -310,21 +304,21 @@ class Ui_main(object):
 
         self.sub_nro = QLabel(self.totales)
         self.sub_nro.setObjectName(u"sub_nro")
-        sizePolicy6.setHeightForWidth(self.sub_nro.sizePolicy().hasHeightForWidth())
-        self.sub_nro.setSizePolicy(sizePolicy6)
+        sizePolicy4.setHeightForWidth(self.sub_nro.sizePolicy().hasHeightForWidth())
+        self.sub_nro.setSizePolicy(sizePolicy4)
         self.sub_nro.setStyleSheet(u"font: 16pt \"Sans Serif\";")
         self.sub_nro.setWordWrap(True)
 
         self.gridLayout_4.addWidget(self.sub_nro, 2, 2, 1, 1)
 
 
-        self.gridLayout_3.addWidget(self.totales, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.totales, 0, 1, 2, 1)
 
 
-        self.verticalLayout.addWidget(self.pago_frame)
+        self.gridLayout_5.addWidget(self.pago_frame, 2, 0, 1, 1)
 
 
-        self.gridLayout.addWidget(self.tabla, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.bottom, 1, 0, 1, 1)
 
 
         self.retranslateUi(main)
@@ -353,8 +347,8 @@ class Ui_main(object):
         self.editar_articulo.setText(QCoreApplication.translate("main", u"Editar Articulo", None))
         self.limpiar_lista.setText(QCoreApplication.translate("main", u"Limpiar Lista", None))
         self.buscar_inventario.setText(QCoreApplication.translate("main", u"Buscar Inventario", None))
-        self.pagar_boton.setText(QCoreApplication.translate("main", u"Pagar", None))
         self.pushButton.setText(QCoreApplication.translate("main", u"Ventas Realizadas", None))
+        self.pagar_boton.setText(QCoreApplication.translate("main", u"Pagar", None))
         self.sub_total_label.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">Sub Total:</span></p></body></html>", None))
         self.total_nro.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">0</span></p></body></html>", None))
         self.itebis_nro.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">0</span></p></body></html>", None))
