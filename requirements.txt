@@ -1,3 +1,4 @@
-customtkinter
-git+https://github.com/JohnDevlopment/CTkTreeview.git #ctkTreeview
-icecream #denpendencia para ctktreeview
+pyside6==6.10.2
+PySide6.egg==info
+pyside6_addons==6.10.2
+pyside6_essentials==6.10.2

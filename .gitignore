@@ -5,6 +5,7 @@ __pycache__
 run.py
 pruebas.py
 prueba.py
+test.py
 
 #todas las db
 *.db

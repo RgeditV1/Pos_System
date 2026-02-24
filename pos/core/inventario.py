@@ -1,5 +1,5 @@
 import sqlite3
-from db.conect import ConexionDB
+from pos.db.conect import ConexionDB
 
 
 class Inventario:
