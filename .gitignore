@@ -12,3 +12,6 @@ test.py
 
 #carpeta de vscode
 .vscode
+
+#logs
+logs/*

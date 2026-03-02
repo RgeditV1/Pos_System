@@ -1,6 +1,8 @@
 import sqlite3
+import logging
 from pos.db.conect import ConexionDB
 
+logger = logging.getLogger(__name__)
 
 class Inventario:
     def __init__(self):
@@ -25,7 +27,7 @@ class Inventario:
             """)
             self.con.commit()
         except sqlite3.Error as err:
-            print("Error creando tabla:", err)
+            logger.exception("Error creando tabla productos: %s", err)
 
     # -------------------------
     # CREATE
@@ -44,9 +46,10 @@ class Inventario:
             return True
 
         except sqlite3.IntegrityError:
+            logger.warning("No se pudo agregar producto por integridad: id=%s", id_producto)
             return False
         except sqlite3.Error as err:
-            print("Error agregando producto:", err)
+            logger.exception("Error agregando producto id=%s: %s", id_producto, err)
             return False
 
     # -------------------------
@@ -72,7 +75,12 @@ class Inventario:
             return None
 
         except sqlite3.Error as err:
-            print("Error buscando producto:", err)
+            logger.exception(
+                "Error buscando producto id=%s descripcion=%s: %s",
+                id_producto,
+                descripcion,
+                err,
+            )
             return None
 
     def mostrar_productos(self):
@@ -80,7 +88,7 @@ class Inventario:
             self.consulta.execute("SELECT * FROM productos")
             return self.consulta.fetchall()
         except sqlite3.Error as err:
-            print("Error mostrando productos:", err)
+            logger.exception("Error mostrando productos: %s", err)
             return ()
 
     # -------------------------
@@ -94,6 +102,7 @@ class Inventario:
             )
             return self.consulta.fetchone() is not None
         except sqlite3.Error:
+            logger.exception("Error validando existencia de producto id=%s", id_producto)
             return False
 
     # -------------------------
@@ -133,7 +142,7 @@ class Inventario:
             self.con.commit()
             return True
         except sqlite3.Error as err:
-            print("Error actualizando producto:", err)
+            logger.exception("Error actualizando producto id=%s: %s", id_producto, err)
             return False
 
     # -------------------------
@@ -154,7 +163,7 @@ class Inventario:
             self.con.commit()
             return True
         except sqlite3.Error as err:
-            print("Error añadiendo stock:", err)
+            logger.exception("Error añadiendo stock id=%s cantidad=%s: %s", id_producto, cantidad, err)
             return False
 
     # -------------------------
@@ -172,7 +181,7 @@ class Inventario:
             self.con.commit()
             return True
         except sqlite3.Error as err:
-            print("Error eliminando producto:", err)
+            logger.exception("Error eliminando producto id=%s: %s", id_producto, err)
             return False
 
     # -------------------------
