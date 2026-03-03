@@ -1,0 +1,12 @@
+[project]
+name = "pos-system"
+version = "0.1.0"
+authors = [{ name = "RgeditV1", email = "angelmiguelparedes@gmail.com" }]
+description = "Punto de Venta Open Source para cualquiera que necesite un ejemplo"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pyside6==6.10.2",
+    "pyside6-addons==6.10.2",
+    "pyside6-essentials==6.10.2",
+]

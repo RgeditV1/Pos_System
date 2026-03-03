@@ -1,12 +1,11 @@
-'''ESTE MODULO ES UNICA Y EXCLUSIVAMENTE PARA ESTABLECER LAS INTERFACES Y DE MODIFICACIONES DE LAYOUTS Y WIDGETS
-   DADO QUE SE UTILIZA QDESIGNER PARA GENERAR LAS UI, NO QUEREMOS MODIFICAR EL ARCHIVO PY GENERADO
-   MEJOR MODIFICAMOS EXTERNAMENTE LOS ATRIBUTOS Y NO NOS METEMOS CON LOS MODULOS PY GENERADOS DE UI
+'''
+LOS MODULOS VIEW SOLO SERAN PARA ESTABLECER SU UI Y HACER MODIFICACIONES
 '''
 import logging
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QShortcut, QKeySequence
 from PySide6.QtWidgets import QTableWidgetItem, QAbstractItemView
-from pos.modulos_ui.ventas_ui import Ui_main
+from .ventas_ui import Ui_main
 from pos.core.productos import Producto
 
 
@@ -86,6 +85,10 @@ class VENTA:
         base = f"{valor:,.2f}"
         return base.replace(",", "X").replace(".", ",").replace("X", ".")
 
+    def __parse_moneda(self, texto: str) -> float: # entrada de texto a num para calculos
+        texto_limpio = texto.strip().replace(".", "").replace(",", ".")
+        return float(texto_limpio)
+
 
     def __recalcular_totales(self):
         subtotal = 0.0
@@ -94,7 +97,7 @@ class VENTA:
             if item_total is None:
                 continue
             try:
-                subtotal += float(item_total.text())
+                subtotal += self.__parse_moneda(item_total.text())
             except ValueError:
                 logger.warning("Total invalido en fila=%s valor=%s", fila, item_total.text())
 
@@ -105,8 +108,7 @@ class VENTA:
         total_general = subtotal + (itbis if self._aplicar_itbis_en_total else 0.0)
 
         self.ui_ventas.sub_nro.setText(self.__formato_moneda(subtotal))
-        if self._aplicar_itbis_en_total:
-            self.ui_ventas.itbis_nro.setText(self.__formato_moneda(itbis_mostrado))
+        self.ui_ventas.itbis_nro.setText(self.__formato_moneda(itbis_mostrado))
         self.ui_ventas.total_nro.setText(self.__formato_moneda(total_general))
 
     def __crear_item(self, valor: str, editable: bool = False) -> QTableWidgetItem:
@@ -134,7 +136,7 @@ class VENTA:
             cantidad = int(texto_cantidad)
 
         try:
-            precio = float(precio_item.text())
+            precio = self.__parse_moneda(precio_item.text())
         except ValueError:
             logger.warning("Precio invalido en fila=%s valor=%s", fila, precio_item.text())
             return
@@ -149,9 +151,9 @@ class VENTA:
 
             total_item = self.tabla.item(fila, 4)
             if total_item is None:
-                self.tabla.setItem(fila, 4, self.__crear_item(f"{total_nuevo:.2f}"))
+                self.tabla.setItem(fila, 4, self.__crear_item(self.__formato_moneda(total_nuevo)))
             else:
-                total_item.setText(f"{total_nuevo:.2f}")
+                total_item.setText(self.__formato_moneda(total_nuevo))
                 total_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
         finally:
             self.tabla.setSortingEnabled(estaba_ordenando)
@@ -181,9 +183,9 @@ class VENTA:
                self.tabla.insertRow(row)
                self.tabla.setItem(row, 0, self.__crear_item(str(producto["id"])))
                self.tabla.setItem(row, 1, self.__crear_item(str(producto["descripcion"])))
-               self.tabla.setItem(row, 2, self.__crear_item(str(producto["precio"])))
+               self.tabla.setItem(row, 2, self.__crear_item(self.__formato_moneda(float(producto["precio"]))))
                self.tabla.setItem(row, 3, self.__crear_item(str(producto["cantidad"]), editable=True))
-               self.tabla.setItem(row, 4, self.__crear_item(f'{float(producto["total"]):.2f}'))
+               self.tabla.setItem(row, 4, self.__crear_item(self.__formato_moneda(float(producto["total"]))))
            else:
                precio_item = self.tabla.item(fila, 2)
                cantidad_item = self.tabla.item(fila, 3)
@@ -193,7 +195,7 @@ class VENTA:
                    logger.warning("Fila existente sin datos completos para id=%s", producto["id"])
                    return
 
-               precio_actual = float(precio_item.text())
+               precio_actual = self.__parse_moneda(precio_item.text())
                cantidad_actual = int(cantidad_item.text())
                cantidad_nueva = int(producto["cantidad"])
                cantidad_total = cantidad_actual + cantidad_nueva
@@ -202,9 +204,9 @@ class VENTA:
                cantidad_item.setText(str(cantidad_total))
                total_item = self.tabla.item(fila, 4)
                if total_item is None:
-                   self.tabla.setItem(fila, 4, self.__crear_item(f"{total_nuevo:.2f}"))
+                   self.tabla.setItem(fila, 4, self.__crear_item(self.__formato_moneda(total_nuevo)))
                else:
-                   total_item.setText(f"{total_nuevo:.2f}")
+                   total_item.setText(self.__formato_moneda(total_nuevo))
                    total_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
        finally:
            self.tabla.setSortingEnabled(estaba_ordenando)
