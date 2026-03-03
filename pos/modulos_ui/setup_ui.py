@@ -67,6 +67,7 @@ class VENTA:
 
 
     def _buscar_fila_por_id(self, id_producto):
+        """esto servira como filtro contra los id repetidos"""
         for fila in range(self.tabla.rowCount()):
             item_id = self.tabla.item(fila, 0)
             if item_id and item_id.text() == str(id_producto):
@@ -81,7 +82,7 @@ class VENTA:
        try:
            fila = self._buscar_fila_por_id(producto["id"])
 
-           if fila is None:
+           if fila is None: # osea que no hay un id repetido pues jaja
                row = self.tabla.rowCount()
                self.tabla.insertRow(row)
                self.tabla.setItem(row, 0, QTableWidgetItem(str(producto["id"])))
@@ -95,6 +96,7 @@ class VENTA:
            cantidad_item = self.tabla.item(fila, 3)
 
            if precio_item is None or cantidad_item is None:
+               # realmente es poco probable que se active esto, pues siempre se agregara un 1, pero por si acaso
                logger.warning("Fila existente sin datos completos para id=%s", producto["id"])
                return
 
