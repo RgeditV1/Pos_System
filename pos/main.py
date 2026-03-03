@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow,
                                QVBoxLayout, QTabWidget, QWidget)
 import logging
 import os
-from pos.modulos_ui.setup_ui import VENTA
+from pos.modulos_ui.ventas.ventas_view import VENTA
 from pos.core.logging_config import setup_logging
 
 
