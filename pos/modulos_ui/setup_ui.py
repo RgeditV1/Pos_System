@@ -3,6 +3,7 @@
    MEJOR MODIFICAMOS EXTERNAMENTE LOS ATRIBUTOS Y NO NOS METEMOS CON LOS MODULOS PY GENERADOS DE UI
 '''
 import logging
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QShortcut, QKeySequence
 from PySide6.QtWidgets import QTableWidgetItem, QAbstractItemView
 from pos.modulos_ui.ventas_ui import Ui_main
@@ -20,7 +21,7 @@ class VENTA:
         self.consulta = Producto()
         self.__hacer_mods()
         self.__accion()
-        self._itbis_rate = 0.18
+        self._itbis_rate = 0.18 #en un futuro hare que esto puede variar manualmente
         self._mostrar_itbis = False           # label itbis_nro queda en 0
         self._aplicar_itbis_en_total = False  # total no suma itbis por ahora
         self._itbis_calculado = 0.0
@@ -30,6 +31,7 @@ class VENTA:
     def __accion(self):
         self.ui_ventas.agregar_articulo.clicked.connect(self.get_producto)
         self.ui_ventas.eliminar_articulo.clicked.connect(self.__eliminar_articulo)
+        self.tabla.itemChanged.connect(self.__on_item_changed)
 
         #Enter Binding
         self.ui_ventas.entry_cantidad.returnPressed.connect(self.get_producto)
@@ -80,7 +82,78 @@ class VENTA:
             self.id_input.clear()
             self.cantidad_input.clear()
 
+    def __recalcular_totales(self):
+        subtotal = 0.0
+        for fila in range(self.tabla.rowCount()):
+            item_total = self.tabla.item(fila, 4)
+            if item_total is None:
+                continue
+            try:
+                subtotal += float(item_total.text())
+            except ValueError:
+                logger.warning("Total invalido en fila=%s valor=%s", fila, item_total.text())
 
+        itbis = subtotal * self._itbis_rate
+        self._itbis_calculado = itbis
+
+        itbis_mostrado = itbis if self._mostrar_itbis else 0.0
+        total_general = subtotal + (itbis if self._aplicar_itbis_en_total else 0.0)
+
+        self.ui_ventas.sub_nro.setText(f"{subtotal:.2f}")
+        if self._aplicar_itbis_en_total:
+            self.ui_ventas.itbis_nro.setText(f"{itbis_mostrado:.2f}")
+        self.ui_ventas.total_nro.setText(f"{total_general:.2f}")
+
+    def __crear_item(self, valor: str, editable: bool = False) -> QTableWidgetItem:
+        item = QTableWidgetItem(valor)
+        flags = Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled
+        if editable:
+            flags |= Qt.ItemFlag.ItemIsEditable
+        item.setFlags(flags)
+        return item
+
+    def __on_item_changed(self, item: QTableWidgetItem) -> None:
+        if item.column() != 3:
+            return
+
+        fila = item.row()
+        precio_item = self.tabla.item(fila, 2)
+        if precio_item is None:
+            return
+
+        texto_cantidad = item.text().strip()
+        if not texto_cantidad.isdigit() or int(texto_cantidad) <= 0:
+            logger.warning("Cantidad invalida en fila=%s valor=%s", fila, texto_cantidad)
+            cantidad = 1
+        else:
+            cantidad = int(texto_cantidad)
+
+        try:
+            precio = float(precio_item.text())
+        except ValueError:
+            logger.warning("Precio invalido en fila=%s valor=%s", fila, precio_item.text())
+            return
+
+        total_nuevo = precio * cantidad
+        estaba_ordenando = self.tabla.isSortingEnabled()
+        self.tabla.blockSignals(True)
+        self.tabla.setSortingEnabled(False)
+        try:
+            if item.text() != str(cantidad):
+                item.setText(str(cantidad))
+
+            total_item = self.tabla.item(fila, 4)
+            if total_item is None:
+                self.tabla.setItem(fila, 4, self.__crear_item(f"{total_nuevo:.2f}"))
+            else:
+                total_item.setText(f"{total_nuevo:.2f}")
+                total_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+        finally:
+            self.tabla.setSortingEnabled(estaba_ordenando)
+            self.tabla.blockSignals(False)
+
+        self.__recalcular_totales()
+    
     def _buscar_fila_por_id(self, id_producto):
         """esto servira como filtro contra los id repetidos"""
         for fila in range(self.tabla.rowCount()):
@@ -92,6 +165,7 @@ class VENTA:
 
     def set_producto(self, producto):
        estaba_ordenando = self.tabla.isSortingEnabled()
+       self.tabla.blockSignals(True)
        self.tabla.setSortingEnabled(False)
 
        try:
@@ -100,31 +174,38 @@ class VENTA:
            if fila is None: # osea que no hay un id repetido pues jaja
                row = self.tabla.rowCount()
                self.tabla.insertRow(row)
-               self.tabla.setItem(row, 0, QTableWidgetItem(str(producto["id"])))
-               self.tabla.setItem(row, 1, QTableWidgetItem(str(producto["descripcion"])))
-               self.tabla.setItem(row, 2, QTableWidgetItem(str(producto["precio"])))
-               self.tabla.setItem(row, 3, QTableWidgetItem(str(producto["cantidad"])))
-               self.tabla.setItem(row, 4, QTableWidgetItem(str(producto["total"])))
-               return
+               self.tabla.setItem(row, 0, self.__crear_item(str(producto["id"])))
+               self.tabla.setItem(row, 1, self.__crear_item(str(producto["descripcion"])))
+               self.tabla.setItem(row, 2, self.__crear_item(str(producto["precio"])))
+               self.tabla.setItem(row, 3, self.__crear_item(str(producto["cantidad"]), editable=True))
+               self.tabla.setItem(row, 4, self.__crear_item(f'{float(producto["total"]):.2f}'))
+           else:
+               precio_item = self.tabla.item(fila, 2)
+               cantidad_item = self.tabla.item(fila, 3)
 
-           precio_item = self.tabla.item(fila, 2)
-           cantidad_item = self.tabla.item(fila, 3)
+               if precio_item is None or cantidad_item is None:
+                   # realmente es poco probable que se active esto, pues siempre se agregara un 1, pero por si acaso
+                   logger.warning("Fila existente sin datos completos para id=%s", producto["id"])
+                   return
 
-           if precio_item is None or cantidad_item is None:
-               # realmente es poco probable que se active esto, pues siempre se agregara un 1, pero por si acaso
-               logger.warning("Fila existente sin datos completos para id=%s", producto["id"])
-               return
+               precio_actual = float(precio_item.text())
+               cantidad_actual = int(cantidad_item.text())
+               cantidad_nueva = int(producto["cantidad"])
+               cantidad_total = cantidad_actual + cantidad_nueva
+               total_nuevo = precio_actual * cantidad_total
 
-           precio_actual = float(precio_item.text())
-           cantidad_actual = int(cantidad_item.text())
-           cantidad_nueva = int(producto["cantidad"])
-           cantidad_total = cantidad_actual + cantidad_nueva
-           total_nuevo = precio_actual * cantidad_total
-
-           self.tabla.setItem(fila, 3, QTableWidgetItem(str(cantidad_total)))
-           self.tabla.setItem(fila, 4, QTableWidgetItem(str(total_nuevo)))
+               cantidad_item.setText(str(cantidad_total))
+               total_item = self.tabla.item(fila, 4)
+               if total_item is None:
+                   self.tabla.setItem(fila, 4, self.__crear_item(f"{total_nuevo:.2f}"))
+               else:
+                   total_item.setText(f"{total_nuevo:.2f}")
+                   total_item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
        finally:
            self.tabla.setSortingEnabled(estaba_ordenando)
+           self.tabla.blockSignals(False)
+
+       self.__recalcular_totales()
     
     def __eliminar_articulo(self):
         fila = self.tabla.currentRow()
@@ -132,3 +213,4 @@ class VENTA:
             logger.info('No Hay Fila Seleccionada Para Eliminar')
             return
         self.tabla.removeRow(fila)
+        self.__recalcular_totales()
