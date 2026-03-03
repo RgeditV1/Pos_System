@@ -2,10 +2,11 @@
    DADO QUE SE UTILIZA QDESIGNER PARA GENERAR LAS UI, NO QUEREMOS MODIFICAR EL ARCHIVO PY GENERADO
    MEJOR MODIFICAMOS EXTERNAMENTE LOS ATRIBUTOS Y NO NOS METEMOS CON LOS MODULOS PY GENERADOS DE UI
 '''
-from PySide6.QtWidgets import QTableWidgetItem
-from pos.modulos_ui.ventas import Ui_main
-from pos.core.productos import Producto
 import logging
+from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtWidgets import QTableWidgetItem, QAbstractItemView
+from pos.modulos_ui.ventas_ui import Ui_main
+from pos.core.productos import Producto
 
 
 logger = logging.getLogger(__name__)
@@ -13,18 +14,30 @@ logger = logging.getLogger(__name__)
 
 class VENTA:
     def __init__(self, widget):
+        self.widget = widget
         self.ui_ventas = Ui_main()
-        self.ui_ventas.setupUi(widget)
+        self.ui_ventas.setupUi(self.widget)
         self.consulta = Producto()
         self.__hacer_mods()
         self.__accion()
+        self._itbis_rate = 0.18
+        self._mostrar_itbis = False           # label itbis_nro queda en 0
+        self._aplicar_itbis_en_total = False  # total no suma itbis por ahora
+        self._itbis_calculado = 0.0
+
+
 
     def __accion(self):
         self.ui_ventas.agregar_articulo.clicked.connect(self.get_producto)
+        self.ui_ventas.eliminar_articulo.clicked.connect(self.__eliminar_articulo)
 
         #Enter Binding
         self.ui_ventas.entry_cantidad.returnPressed.connect(self.get_producto)
         self.ui_ventas.entry_producto.returnPressed.connect(self.get_producto)
+        
+        #Delete Binding
+        self.shortcut_delete = QShortcut(QKeySequence("Delete"), self.widget) # type: ignore
+        self.shortcut_delete.activated.connect(self.__eliminar_articulo)
 
     def __hacer_mods(self):
         self.__mod_tabla()
@@ -32,12 +45,14 @@ class VENTA:
     def __mod_tabla(self):
         self.tabla = self.ui_ventas.tabla_widget
         self.tabla.setColumnCount(5)
+        self.tabla.setSelectionBehavior(QAbstractItemView.SelectRows)  # type: ignore
+        #para la seleccoin de una fila a la vez
+        self.tabla.setSelectionMode(QAbstractItemView.SingleSelection) # type: ignore
         self.tabla.setHorizontalHeaderLabels(["ID", "Descripción",
                                          "Precio", "Cantidad", "Total"])
         self.tabla.setColumnWidth(1, 335)  # Columna "Descripción" con 300 px
         self.tabla.horizontalHeader().setStretchLastSection(True)
 
-    
     def get_producto(self):
         self.id_input = self.ui_ventas.entry_producto
         self.cantidad_input = self.ui_ventas.entry_cantidad
@@ -110,3 +125,10 @@ class VENTA:
            self.tabla.setItem(fila, 4, QTableWidgetItem(str(total_nuevo)))
        finally:
            self.tabla.setSortingEnabled(estaba_ordenando)
+    
+    def __eliminar_articulo(self):
+        fila = self.tabla.currentRow()
+        if fila < 0:
+            logger.info('No Hay Fila Seleccionada Para Eliminar')
+            return
+        self.tabla.removeRow(fila)

@@ -24,7 +24,7 @@ class Ui_main(object):
     def setupUi(self, main):
         if not main.objectName():
             main.setObjectName(u"main")
-        main.resize(684, 537)
+        main.resize(704, 537)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -103,21 +103,21 @@ class Ui_main(object):
 
         self.gridLayout_4.addWidget(self.total_nro, 0, 1, 1, 5)
 
-        self.itebis_nro = QLabel(self.totales)
-        self.itebis_nro.setObjectName(u"itebis_nro")
-        sizePolicy3.setHeightForWidth(self.itebis_nro.sizePolicy().hasHeightForWidth())
-        self.itebis_nro.setSizePolicy(sizePolicy3)
-        self.itebis_nro.setStyleSheet(u"font: 16pt \"Sans Serif\";")
-        self.itebis_nro.setWordWrap(True)
+        self.itbis_nro = QLabel(self.totales)
+        self.itbis_nro.setObjectName(u"itbis_nro")
+        sizePolicy3.setHeightForWidth(self.itbis_nro.sizePolicy().hasHeightForWidth())
+        self.itbis_nro.setSizePolicy(sizePolicy3)
+        self.itbis_nro.setStyleSheet(u"font: 16pt \"Sans Serif\";")
+        self.itbis_nro.setWordWrap(True)
 
-        self.gridLayout_4.addWidget(self.itebis_nro, 3, 1, 1, 5)
+        self.gridLayout_4.addWidget(self.itbis_nro, 3, 1, 1, 5)
 
-        self.itebis_label = QLabel(self.totales)
-        self.itebis_label.setObjectName(u"itebis_label")
-        self.itebis_label.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.itebis_label.setStyleSheet(u"font: 16pt \"Sans Serif\";")
+        self.itbis_label = QLabel(self.totales)
+        self.itbis_label.setObjectName(u"itbis_label")
+        self.itbis_label.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.itbis_label.setStyleSheet(u"font: 16pt \"Sans Serif\";")
 
-        self.gridLayout_4.addWidget(self.itebis_label, 3, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.itbis_label, 3, 0, 1, 1)
 
         self.total_label = QLabel(self.totales)
         self.total_label.setObjectName(u"total_label")
@@ -148,7 +148,7 @@ class Ui_main(object):
         if (self.tabla_widget.columnCount() < 5):
             self.tabla_widget.setColumnCount(5)
         self.tabla_widget.setObjectName(u"tabla_widget")
-        self.tabla_widget.setAcceptDrops(False)
+        self.tabla_widget.setAcceptDrops(True)
         self.tabla_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.tabla_widget.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustIgnored)
         self.tabla_widget.setEditTriggers(QAbstractItemView.EditTrigger.SelectedClicked)
@@ -157,14 +157,14 @@ class Ui_main(object):
         self.tabla_widget.setDragEnabled(False)
         self.tabla_widget.setDragDropOverwriteMode(False)
         self.tabla_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-        self.tabla_widget.setDefaultDropAction(Qt.DropAction.IgnoreAction)
+        self.tabla_widget.setDefaultDropAction(Qt.DropAction.MoveAction)
         self.tabla_widget.setAlternatingRowColors(True)
         self.tabla_widget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tabla_widget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
         self.tabla_widget.setGridStyle(Qt.PenStyle.SolidLine)
         self.tabla_widget.setSortingEnabled(True)
         self.tabla_widget.setColumnCount(5)
-        self.tabla_widget.setSupportedDragActions(Qt.DropAction.IgnoreAction)
+        self.tabla_widget.setSupportedDragActions(Qt.DropAction.MoveAction)
 
         self.gridLayout_5.addWidget(self.tabla_widget, 0, 0, 3, 1)
 
@@ -394,8 +394,8 @@ class Ui_main(object):
         self.pagar_boton.setText(QCoreApplication.translate("main", u"Pagar", None))
         self.sub_total_label.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">Sub Total:</span></p></body></html>", None))
         self.total_nro.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">0</span></p></body></html>", None))
-        self.itebis_nro.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">0</span></p></body></html>", None))
-        self.itebis_label.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">Itebis:</span></p></body></html>", None))
+        self.itbis_nro.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">0</span></p></body></html>", None))
+        self.itbis_label.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">Itbis:</span></p></body></html>", None))
         self.total_label.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">Total:</span></p></body></html>", None))
         self.sub_nro.setText(QCoreApplication.translate("main", u"<html><head/><body><p><span style=\" font-weight:700;\">0</span></p></body></html>", None))
         self.entry_producto.setInputMask("")

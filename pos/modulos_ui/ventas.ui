@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
+    <width>704</width>
     <height>537</height>
    </rect>
   </property>
@@ -138,7 +138,7 @@
              </widget>
             </item>
             <item row="3" column="1" colspan="5">
-             <widget class="QLabel" name="itebis_nro">
+             <widget class="QLabel" name="itbis_nro">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -157,7 +157,7 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="itebis_label">
+             <widget class="QLabel" name="itbis_label">
               <property name="contextMenuPolicy">
                <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
               </property>
@@ -165,7 +165,7 @@
                <string notr="true">font: 16pt &quot;Sans Serif&quot;;</string>
               </property>
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Itebis:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Itbis:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -224,7 +224,7 @@
       <item row="0" column="0" rowspan="3">
        <widget class="QTableWidget" name="tabla_widget">
         <property name="acceptDrops">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
@@ -251,7 +251,7 @@
          <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
         </property>
         <property name="defaultDropAction">
-         <enum>Qt::DropAction::IgnoreAction</enum>
+         <enum>Qt::DropAction::MoveAction</enum>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -272,7 +272,7 @@
          <number>5</number>
         </property>
         <property name="supportedDragActions">
-         <set>Qt::DropAction::IgnoreAction</set>
+         <set>Qt::DropAction::MoveAction</set>
         </property>
         <column/>
         <column/>
