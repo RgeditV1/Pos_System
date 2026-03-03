@@ -82,6 +82,11 @@ class VENTA:
             self.id_input.clear()
             self.cantidad_input.clear()
 
+    def __formato_moneda(self, valor: float) -> str: #Formato Latino mis panas
+        base = f"{valor:,.2f}"
+        return base.replace(",", "X").replace(".", ",").replace("X", ".")
+
+
     def __recalcular_totales(self):
         subtotal = 0.0
         for fila in range(self.tabla.rowCount()):
@@ -99,10 +104,10 @@ class VENTA:
         itbis_mostrado = itbis if self._mostrar_itbis else 0.0
         total_general = subtotal + (itbis if self._aplicar_itbis_en_total else 0.0)
 
-        self.ui_ventas.sub_nro.setText(f"{subtotal:.2f}")
+        self.ui_ventas.sub_nro.setText(self.__formato_moneda(subtotal))
         if self._aplicar_itbis_en_total:
-            self.ui_ventas.itbis_nro.setText(f"{itbis_mostrado:.2f}")
-        self.ui_ventas.total_nro.setText(f"{total_general:.2f}")
+            self.ui_ventas.itbis_nro.setText(self.__formato_moneda(itbis_mostrado))
+        self.ui_ventas.total_nro.setText(self.__formato_moneda(total_general))
 
     def __crear_item(self, valor: str, editable: bool = False) -> QTableWidgetItem:
         item = QTableWidgetItem(valor)
