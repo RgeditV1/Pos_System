@@ -1,0 +1,50 @@
+name: test_and_build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 14 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run_test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.14
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.14"
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+
+    - name: Install dependencies with uv
+      run: |
+        uv sync --frozen
+
+    - name: Lint with flake8
+      run: |
+        uv run --with flake8 flake8 . --exclude=.venv --count --select=E9,F63,F7,F82 --show-source --statistics
+        uv run --with flake8 flake8 . --exclude=.venv --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Test with pytest
+      if: ${{ hashFiles('tests/**/*.py', 'test_*.py', '**/*_test.py') != '' }}
+      run: |
+        uv run --with pytest pytest
+
+    - name: Skip pytest (no tests found)
+      if: ${{ hashFiles('tests/**/*.py', 'test_*.py', '**/*_test.py') == '' }}
+      run: echo "No test files found. Pytest step skipped."
