@@ -1,10 +1,14 @@
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 
+def setup_logging(level: int = logging.INFO) -> None: 
+    '''Aqui definiremos como funcionara el sistema de logs'''
+    logs_dir = Path.cwd() / 'logs'
+    if getattr(sys, 'frozen', False): # en dado caso que estemos usando el archivo compilado
+        logs_dir = Path.home() /'.pos_system' / 'logs'
 
-def setup_logging(level: int = logging.INFO) -> None:
-    logs_dir = Path.cwd() / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
 
     log_file = logs_dir / f"pos_{datetime.now().strftime('%Y-%m-%d')}.txt"
