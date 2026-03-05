@@ -2,6 +2,8 @@ from PySide6.QtWidgets import (QApplication, QMainWindow,
                                QVBoxLayout, QTabWidget, QWidget)
 import logging
 import os
+import sys
+import traceback
 from pos.modulos_ui.ventas.ventas_view import VENTA
 from pos.core.logging_config import setup_logging
 
@@ -44,11 +46,27 @@ def main():
     log_level = getattr(logging, env_level, logging.INFO)
     setup_logging(level=log_level)
     logger.info("Iniciando aplicacion POS")
+    logger.info(
+        "Entorno de ejecucion: frozen=%s executable=%s cwd=%s",
+        getattr(sys, "frozen", False),
+        sys.executable,
+        os.getcwd(),
+    )
 
-    app = QApplication([])
-    window = MainWindow()
-    window.show()
-    app.exec()
+    def _capturar_excepcion(tipo, valor, tb):
+        detalle = "".join(traceback.format_exception(tipo, valor, tb))
+        logger.critical("Excepcion no controlada:\n%s", detalle)
+
+    sys.excepthook = _capturar_excepcion
+
+    try:
+        app = QApplication([])
+        window = MainWindow()
+        window.show()
+        app.exec()
+    except Exception:
+        logger.exception("Error critico al iniciar la interfaz principal")
+        raise
 
 
 if __name__ == "__main__":
