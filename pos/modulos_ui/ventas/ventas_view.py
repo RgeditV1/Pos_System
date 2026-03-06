@@ -31,7 +31,10 @@ class VENTA:
         self.ui_ventas.agregar_articulo.clicked.connect(self.get_producto)
         self.ui_ventas.eliminar_articulo.clicked.connect(self.__eliminar_articulo)
         self.ui_ventas.limpiar_lista.clicked.connect(self.__limpiar_tabla)
-        self.tabla.itemChanged.connect(self.__on_item_changed)
+        self.ui_ventas.editar_articulo.clicked.connect(self.__editar_articulo)
+        
+        self.tabla.itemChanged.connect(self.__modificar_item)
+
 
         #Enter Binding
         self.ui_ventas.entry_cantidad.returnPressed.connect(self.get_producto)
@@ -40,6 +43,20 @@ class VENTA:
         #Delete Binding
         self.shortcut_delete = QShortcut(QKeySequence("Delete"), self.widget) # type: ignore
         self.shortcut_delete.activated.connect(self.__eliminar_articulo)
+
+    def __editar_articulo(self) -> None:
+        fila = self.tabla.currentRow()
+        if fila < 0:
+            logger.info("No hay fila seleccionada para editar")
+            return
+
+        item_cantidad = self.tabla.item(fila, 3)
+        if item_cantidad is None:
+            logger.warning("No se encontro celda de cantidad en fila=%s", fila)
+            return
+
+        self.tabla.setCurrentItem(item_cantidad)
+        self.tabla.editItem(item_cantidad) # este es el metodo que te permite modificar la celda
 
     def __hacer_mods(self):
         self.__mod_tabla()
@@ -120,13 +137,14 @@ class VENTA:
         item.setFlags(flags)
         return item
 
-    def __on_item_changed(self, item: QTableWidgetItem) -> None:
-        if item.column() != 3:
+    def __modificar_item(self, item: QTableWidgetItem) -> None:
+        # Para modificar el item, especificamente la cantidad
+        if item.column() != 3: # Si la columna seleccionada no es cantidad(colum 3), no hacer nada
             return
 
         fila = item.row()
         precio_item = self.tabla.item(fila, 2)
-        if precio_item is None:
+        if precio_item is None: # obviamente si no hay precio el item no es valido, es obligatorio
             return
 
         texto_cantidad = item.text().strip()
