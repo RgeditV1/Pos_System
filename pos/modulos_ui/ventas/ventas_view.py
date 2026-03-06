@@ -30,6 +30,7 @@ class VENTA:
     def __accion(self):
         self.ui_ventas.agregar_articulo.clicked.connect(self.get_producto)
         self.ui_ventas.eliminar_articulo.clicked.connect(self.__eliminar_articulo)
+        self.ui_ventas.limpiar_lista.clicked.connect(self.__limpiar_tabla)
         self.tabla.itemChanged.connect(self.__on_item_changed)
 
         #Enter Binding
@@ -221,3 +222,11 @@ class VENTA:
             return
         self.tabla.removeRow(fila)
         self.__recalcular_totales()
+
+    def __limpiar_tabla(self):
+        if self.tabla.rowCount() > 0:
+            self.tabla.setRowCount(0)
+            self.__recalcular_totales()
+            return
+        else:
+            logger.info('No Hay Items para elimiminar')
