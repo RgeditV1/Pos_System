@@ -156,3 +156,27 @@ def test_get_producto_usa_consulta_y_limpia_inputs(venta):
     assert venta.tabla.item(0, 0).text() == "Z9"
     assert venta.ui_ventas.entry_producto.text() == ""
     assert venta.ui_ventas.entry_cantidad.text() == ""
+
+
+def test_buscar_inventario_abre_qdialog(venta, monkeypatch):
+    llamadas = {"instancias": 0, "exec": 0, "padre": None}
+
+    class FakeBuscaInventario:
+        def __init__(self, widget):
+            llamadas["instancias"] += 1
+            llamadas["padre"] = widget
+
+        def exec(self):
+            llamadas["exec"] += 1
+            return 0
+
+    monkeypatch.setattr(
+        "pos.modulos_ui.ventas.ventas_view.BuscaInventario",
+        FakeBuscaInventario,
+    )
+
+    venta.ui_ventas.buscar_inventario.click()
+
+    assert llamadas["instancias"] == 1
+    assert llamadas["exec"] == 1
+    assert llamadas["padre"] is venta.widget

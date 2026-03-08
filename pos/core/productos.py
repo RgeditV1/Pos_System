@@ -24,7 +24,7 @@ class Producto(Inventario):
         return wrapper
 
     @devolver_producto  
-    def buscar_producto(self, id_producto=None, descripcion=None, cantidad=None):
+    def buscar_producto(self, id_producto=None, descripcion=None, cantidad=None) -> list:
         """
             Esta funcion se encarga de buscar el item en la base de datos y luego
             devolver una lista con el item
@@ -57,3 +57,11 @@ class Producto(Inventario):
         list_producto.append(total)
 
         return list_producto
+
+    def mostrar_productos(self):
+        self.lista = super().mostrar_productos()
+        self.columnas = ['id','descripcion','precio','stock','costo','mayoreo']
+        # -> devuelve una lista de diccionarios
+        self.resultado = [dict(zip(self.columnas, columna)) for columna in self.lista]
+        
+        return self.resultado
