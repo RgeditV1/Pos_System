@@ -1,15 +1,100 @@
 '''
 LOS MODULOS VIEW SOLO SERAN PARA ESTABLECER SU UI Y HACER MODIFICACIONES
 '''
+#imports python
 import logging
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QShortcut, QKeySequence
-from PySide6.QtWidgets import QTableWidgetItem, QAbstractItemView
-from .ventas_ui import Ui_main
+from pathlib import Path
+#imports terceros
+from PySide6.QtCore import Qt, QSortFilterProxyModel
+from PySide6.QtGui import (QShortcut, QKeySequence,QIcon, QStandardItemModel, QStandardItem)
+from PySide6.QtWidgets import (QTableWidgetItem, QAbstractItemView,
+                               QDialog, QLineEdit, QTableView)
+#imports locales
 from pos.core.productos import Producto
+from .ventas_ui import Ui_main
+from .mini_buscador.buscador_ui import Ui_buscador
 
 
 logger = logging.getLogger(__name__)
+class BuscaInventario:
+
+    def __init__(self, widget=None):
+        self.search_icon = Path(__file__).resolve().parent.parent.parent.joinpath('icon/search.ico')
+        self.producto = Producto()
+        self.ventana = Ui_buscador()
+        self.dialog = QDialog(widget)
+        self.ventana.setupUi(self.dialog)
+
+        self.__mod__()
+        self.__fuzzy_search__()
+        self.__set_producto__()
+        self.__accion__()
+
+
+    def __mod__(self):
+        self.tabla: QTableView = self.ventana.tabla
+        self.entry_busqueda = self.ventana.entry_busqueda
+
+        self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderLabels(["ID", "Descripción", "Precio"])
+
+        self.tabla.setModel(self.model)
+        self.tabla.setColumnWidth(1, 355)
+        self.tabla.horizontalHeader().setStretchLastSection(True)
+
+        # Icono de búsqueda en el QLineEdit
+        try:
+            self.entry_busqueda.addAction(QIcon(str(self.search_icon)),
+                                  QLineEdit.ActionPosition.LeadingPosition)
+        except:
+            pass
+
+    def __accion__(self):
+        #conectamos el entry para que mire los resultados
+        self.entry_busqueda.textChanged.connect(self.proxy_model.setFilterFixedString)
+        
+        self.ventana.aceptar.clicked.connect(self.__obtener_item__)
+        self.ventana.cancelar.clicked.connect(self.__cancelar__)
+
+    def __set_producto__(self):
+        lista = self.producto.mostrar_productos()
+
+        for item in lista:
+            fila = [
+                QStandardItem(item['id']),
+                QStandardItem(item['descripcion']),
+                QStandardItem(str(item['precio']))
+            ]
+            self.model.appendRow(fila)
+
+    def __fuzzy_search__(self):
+        self.proxy_model = QSortFilterProxyModel()
+        self.proxy_model.setSourceModel(self.model)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.proxy_model.setFilterKeyColumn(1)  # filtrar por descripción
+        self.tabla.setModel(self.proxy_model)
+
+    def __obtener_item__(self):
+        selection_model = self.tabla.selectionModel()
+
+        if selection_model.hasSelection():
+            index = selection_model.currentIndex()   # índice actual
+            fila = index.row()                       # número de fila
+            
+            columna = 0 # el id
+            valor = self.tabla.model().index(fila, columna).data()
+            logger.info(f"Fila {fila}, Columna {columna}, Valor: {valor}")
+            
+            self.item = self.producto.buscar_producto(id_producto=valor)
+            self.dialog.accept()
+        else:
+            logger.info('No ha seleccionado ningun item')
+    
+    def __cancelar__(self):
+        self.dialog.reject()
+
+    def exec(self) -> int:
+        return self.dialog.exec()
 
 
 class VENTA:
@@ -32,6 +117,7 @@ class VENTA:
         self.ui_ventas.eliminar_articulo.clicked.connect(self.__eliminar_articulo)
         self.ui_ventas.limpiar_lista.clicked.connect(self.__limpiar_tabla)
         self.ui_ventas.editar_articulo.clicked.connect(self.__editar_articulo)
+        self.ui_ventas.buscar_inventario.clicked.connect(self.__buscar_inventario)
         
         self.tabla.itemChanged.connect(self.__modificar_item)
 
@@ -65,6 +151,7 @@ class VENTA:
         self.tabla = self.ui_ventas.tabla_widget
         self.tabla.setColumnCount(5)
         self.tabla.setSelectionBehavior(QAbstractItemView.SelectRows)  # type: ignore
+
         #para la seleccoin de una fila a la vez
         self.tabla.setSelectionMode(QAbstractItemView.SingleSelection) # type: ignore
         self.tabla.setHorizontalHeaderLabels(["ID", "Descripción",
@@ -248,3 +335,9 @@ class VENTA:
             return
         else:
             logger.info('No Hay Items para elimiminar')
+
+    def __buscar_inventario(self):
+        inv = BuscaInventario(self.widget)
+        if inv.exec() == QDialog.Accepted: # type: ignore
+            if hasattr(inv, 'item'):
+                self.set_producto(inv.item)
