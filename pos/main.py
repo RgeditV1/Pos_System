@@ -6,10 +6,11 @@ import sys
 import traceback
 from pos.modulos_ui.ventas.ventas_view import VENTA
 from pos.core.logging_config import setup_logging
-
+from .__init__ import parsedOptions
 
 logger = logging.getLogger(__name__)
 class MainWindow(QMainWindow):
+    
     def __init__(self):
         super().__init__()
         self.setFixedSize(800,650)
@@ -41,7 +42,12 @@ class MainWindow(QMainWindow):
     def __setup_venta_tab(self): # Crear instancia de la UI generada
         self.interfaz_venta = VENTA(self.names['Venta'])
 
-def main():
+def main(argv=None):
+    argv = sys.argv
+    if len(argv) > 1:
+        argv.pop(0) #el primer argumento es el script mismo
+        parsedOptions(argv)
+
     env_level = os.getenv("POS_LOG_LEVEL", "INFO").upper()
     log_level = getattr(logging, env_level, logging.INFO)
     setup_logging(level=log_level)
