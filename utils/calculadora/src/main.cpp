@@ -1,11 +1,12 @@
-#include "calculadora.hpp"
+#include <QApplication>
+#include "mainwindow.hpp"
 
-int main() {
-    uint32_t n1 = 9.5;
-    uint32_t n2 = 2.0;
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
 
-    // Instanciación correcta en el stack
-    Calculadora operar(n1, n2, Calculadora::DIV);
+    MainWindow w;
+    w.show();
 
-    return 0;
+    return a.exec();
 }
