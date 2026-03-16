@@ -1,21 +1,27 @@
 #pragma once
+#include <cstdint>
 
-class Calculadora{
-private:
-    int valor_actual;
-    int valor_previo;
-    /*
-    * Guardara el caracter de la operacion
-    * e.g(+,-,*,/)
-    */
-    char operacion;
-
+class Calculadora {
 public:
-    int sum(int& num, int& num2);
-    int rest(int& num, int& num2);
-    int mult(int& num, int& num2);
-    float div(int& num, int& num2);
+    enum OPERACION {
+        SUM,
+        REST,
+        MULT,
+        DIV,
+    };
 
-    float resultado();
-    void limpiar(); // setea los valores a 0
+    Calculadora(uint32_t& n1, uint32_t& n2, const OPERACION op);
+    
+private:
+    float sum(uint32_t num1, uint32_t num2);
+    float rest(uint32_t num1, uint32_t num2);
+    float mult(uint32_t num1, uint32_t num2);
+    float div(uint32_t num1, uint32_t num2);
+
+    void mostrar_resultado(float r);
+    void limpiar();
+
+    uint32_t *valor_previo = new uint32_t;
+    uint32_t *valor_actual = new uint32_t;
+    OPERACION opt;
 };
