@@ -12,12 +12,10 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 # Fuentes y cabeceras
 set(SOURCES
     src/main.cpp
-    src/calculadora.cpp
     src/mainwindow.cpp
 )
 
 set(HEADERS
-    src/calculadora.hpp
     src/mainwindow.hpp
 )
 

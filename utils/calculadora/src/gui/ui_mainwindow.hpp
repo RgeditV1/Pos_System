@@ -6,15 +6,16 @@
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#pragma once
+#ifndef UI_MAINWINDOW_H
+#define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFrame>
-#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -23,7 +24,7 @@ class Ui_Calculadora
 {
 public:
     QWidget *centralwidget;
-    QGridLayout *gridLayout;
+    QVBoxLayout *verticalLayout;
     QLineEdit *display;
     QFrame *botones;
     QPushButton *cero;
@@ -55,6 +56,7 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(Calculadora->sizePolicy().hasHeightForWidth());
         Calculadora->setSizePolicy(sizePolicy);
+        Calculadora->setMinimumSize(QSize(293, 294));
         Calculadora->setBaseSize(QSize(260, 32));
         QFont font;
         font.setPointSize(20);
@@ -62,12 +64,12 @@ public:
         Calculadora->setInputMethodHints(Qt::InputMethodHint::ImhPreferNumbers|Qt::InputMethodHint::ImhPreferUppercase);
         centralwidget = new QWidget(Calculadora);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        gridLayout = new QGridLayout(centralwidget);
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        verticalLayout = new QVBoxLayout(centralwidget);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         display = new QLineEdit(centralwidget);
         display->setObjectName(QString::fromUtf8("display"));
         display->setEnabled(true);
-        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(display->sizePolicy().hasHeightForWidth());
@@ -81,7 +83,7 @@ public:
         display->setCursorMoveStyle(Qt::CursorMoveStyle::LogicalMoveStyle);
         display->setClearButtonEnabled(false);
 
-        gridLayout->addWidget(display, 0, 0, 1, 1);
+        verticalLayout->addWidget(display);
 
         botones = new QFrame(centralwidget);
         botones->setObjectName(QString::fromUtf8("botones"));
@@ -123,6 +125,11 @@ public:
         sum = new QPushButton(botones);
         sum->setObjectName(QString::fromUtf8("sum"));
         sum->setGeometry(QRect(200, 50, 57, 31));
+        QSizePolicy sizePolicy2(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(sum->sizePolicy().hasHeightForWidth());
+        sum->setSizePolicy(sizePolicy2);
         rest = new QPushButton(botones);
         rest->setObjectName(QString::fromUtf8("rest"));
         rest->setGeometry(QRect(200, 10, 57, 31));
@@ -139,7 +146,7 @@ public:
         igual->setObjectName(QString::fromUtf8("igual"));
         igual->setGeometry(QRect(200, 90, 61, 121));
 
-        gridLayout->addWidget(botones, 1, 0, 1, 1);
+        verticalLayout->addWidget(botones);
 
         Calculadora->setCentralWidget(centralwidget);
 
@@ -177,3 +184,5 @@ namespace Ui {
 } // namespace Ui
 
 QT_END_NAMESPACE
+
+#endif // UI_MAINWINDOW_H
